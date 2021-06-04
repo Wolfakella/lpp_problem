@@ -98,7 +98,7 @@ class Problem():
     
 	def savePlotSequence(self, folder):
 		plt.ioff()
-		for i in range(7, len(self.planes)):
+		for i in range(7, len(self.planes)+1):
 			facets = self.facets(i)
 			fig = plt.figure(figsize=(18,9))
 			ax2 = fig.add_subplot(111, projection='3d')
@@ -113,4 +113,5 @@ class Problem():
             
 			filename = os.path.join(folder, str(i) + '.png')
 			plt.savefig(filename)
+			print('Saved to ' + filename)
 			plt.close(fig)

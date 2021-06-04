@@ -14,7 +14,10 @@ class ProblemsFolder():
 		self.foldername = self.config.get('generator', 'lpp_template')
 		self.subfolder = self.config.get('generator', 'problems_folder')
 		self.problems_folder = os.path.join(os.getcwd(), self.subfolder)
+		self.invalid_folder = 'invalid'
+		self.invalid_path = os.path.join(os.getcwd(), self.invalid_folder)
 		self.counter = 0
+		self.invalid_counter = 0
 		
 	def makeProblemsFolder(self):
 		if os.path.isdir(self.subfolder):
@@ -22,6 +25,13 @@ class ProblemsFolder():
 			time.sleep(1)
 		os.mkdir(self.subfolder)
 		print(self.problems_folder)
+	
+	def makeInvalidFolder(self):
+		if os.path.isdir(self.invalid_folder):
+			shutil.rmtree(self.invalid_path)
+			time.sleep(1)
+		os.mkdir(self.invalid_folder)
+		print(self.invalid_path)
 		
 	def saveProblem(self):
 		new_folder = os.path.join(self.problems_folder, self.foldername.format(self.counter))
@@ -42,6 +52,25 @@ class ProblemsFolder():
 		self.counter += 1
 		return new_folder
 		
+	def saveInvalid(self):
+		new_folder = os.path.join(self.invalid_path, self.foldername.format(self.invalid_counter))
+		os.mkdir(new_folder)
+		
+		src = os.path.join(os.getcwd(), self.problem_filename)
+		dst = os.path.join(new_folder,  self.problem_filename)
+		os.replace(src, dst)
+		
+		src = os.path.join(os.getcwd(), self.trace_filename)
+		dst = os.path.join(new_folder,  self.trace_filename)
+		os.replace(src, dst)
+		
+		src = os.path.join(os.getcwd(), self.solution_filename)
+		dst = os.path.join(new_folder,  self.solution_filename)
+		os.replace(src, dst)
+		
+		self.invalid_counter += 1
+		return new_folder
+		
 	def paths(self):
 		folders = os.listdir(self.problems_folder)
 		result = [os.path.join(self.problems_folder, folder) for folder in folders]
@@ -56,3 +85,7 @@ class ProblemsFolder():
 		folders = self.paths()
 		result = os.path.join(folders[index], self.problem_filename)
 		return result
+		
+	def problemPath(self, index):
+		folders = self.paths()
+		return folders[index]

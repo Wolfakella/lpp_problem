@@ -19,7 +19,7 @@ class Precedent():
 	def saveToFile(self, filename):
 		pass
 	
-	def plot(self):
+	def plot(self, filename=''):
 		plt.ioff()
 		fig = plt.figure(figsize=(16,12))
 		facets = self.problem.facets()
@@ -58,8 +58,13 @@ class Precedent():
 		ax_right.set_ylim(limits[3], limits[2])
 		ax_right.set_zlabel('z')
 		ax_right.set_zlim(limits[4], limits[5])
-		plt.show()
-		plt.close()
+		
+		if not filename:
+			plt.show()
+		else:
+			plt.savefig(filename)
+			print('Saved to ' + filename)
+		plt.close(fig)
 		
 	def axis_lims(self):
 		max_Z = max([max(self.shadow[:,2]), max(self.retina.points[:,2]), self.vertex.point[2]])
