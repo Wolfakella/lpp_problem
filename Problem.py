@@ -1,6 +1,7 @@
 import numpy
 import os
 import copy
+import math
 import lpp_tools as tools
 from scipy.spatial import HalfspaceIntersection
 import matplotlib.pyplot as plt
@@ -36,13 +37,38 @@ class Problem():
 					b = False
 			return b
 
-	def projection(self, x):
+	def distances(self, points):
 		res = []
-		for line in self.planes:
-			if numpy.dot(self.c, line[0:-1]) != 0:
-				distance = (line[-1] - numpy.dot(x, line[0:-1]))/numpy.dot(self.c, line[0:-1])
-				dot = x + self.c * distance[:,numpy.newaxis]
-				[res.append(p) for p in dot if self.belong(p - self.c * .0000001)]
+		for x in points:
+			flag = False
+			for line in self.planes:
+				if numpy.dot(self.c, line[0:-1]) != 0:
+					distance = (line[-1] - numpy.dot(x, line[0:-1]))/numpy.dot(self.c, line[0:-1])
+					dot = x + self.c * distance
+					if self.belong(dot - self.c * .0000001):
+						res.append(distance)
+						flag = True
+			if not flag:
+				res.append(math.inf)
+		min_distance = min(res)
+		for i in range(len(res)):
+			if res[i] == math.inf:
+				res[i] = min_distance
+		return numpy.array(res)
+
+	def projection(self, points):
+		res = []
+		for x in points:
+#			flag = False
+			for line in self.planes:
+				if numpy.dot(self.c, line[0:-1]) != 0:
+					distance = (line[-1] - numpy.dot(x, line[0:-1]))/numpy.dot(self.c, line[0:-1])
+					dot = x + self.c * distance
+					if self.belong(dot - self.c * .0000001):
+						res.append(dot)
+#						flag = True
+#			if not flag:
+#				res.append(x)
 		return numpy.array(res)
 
 	def vertices(self, n=0):

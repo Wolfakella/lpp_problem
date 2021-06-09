@@ -73,3 +73,5 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
 	if iteration == total: 
 		print()
 	
+#def plotDistances(distances, retina):
+	

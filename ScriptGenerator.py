@@ -2,23 +2,33 @@ import subprocess
 import os
 
 def isValid():
-	result = subprocess.check_output(['LPP-Validator.exe'])
+	try:
+		result = subprocess.check_output(['LPP-Validator.exe'])
+	except subprocess.CalledProcessError as e:
+		print("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+		return 0
 	result = int(result.decode('utf-8'))
 	return result
 	
 def createSolution():
-	result = subprocess.check_output(['LPP-Solution.exe'])
+	try:
+		result = subprocess.check_output(['LPP-Solution.exe'])
+	except subprocess.CalledProcessError as e:
+		#print("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+		result = b'Error!'
 	return result.decode('utf-8')
 
 class ProblemsPacket():
-	def __init__(self, filename='packet.txt'):
+	def __init__(self, filename='packet.txt', generate=True):
 		self.filename = filename
-		process = subprocess.Popen(['LPP-Generator.exe'], stdout=subprocess.PIPE, encoding='utf-8')
-		text = process.stdout.read()
-		while text:
-			print(text)
+		print(self.filename)
+		if generate:
+			process = subprocess.Popen(['LPP-Generator.exe'], stdout=subprocess.PIPE, encoding='utf-8')
 			text = process.stdout.read()
-		os.replace('lpp.txt', self.filename)
+			while text:
+				print(text)
+				text = process.stdout.read()
+			os.replace('lpp.txt', self.filename)
 	
 	def __iter__(self):
 		self.fd = open(self.filename, 'r')

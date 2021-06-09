@@ -68,6 +68,7 @@ class Retina():
 		self.rotation_matrix = config.get('retina', 'rotation_matrix')
 		self.reverse_matrix = config.get('retina', 'reverse_matrix')
 
+		print(self.base_filename)
 		print(self.common_filename)
 		
 	def createPoints(self):
@@ -121,17 +122,24 @@ class Retina():
 	def translateTo(self, point):
 		self.points = self.points + point
 	
-	def saveToFile(self):
-		file = open(self.common_filename, "w")
+	def saveToFile(self, common=True):
+		if common:
+			file = open(self.common_filename, "w")
+		else:
+			file = open(self.base_filename, "w")
 		rows = len(self.points)
 		for i in range(0, rows):
 			file.write("\t".join([str(val) for val in self.points[i]]))
 			file.write('\n')
 		file.close()
 		
-	def loadFromCommonFile(self):
+	def loadFromFile(self, common=True):
+		if common:
+			filename = self.common_filename
+		else:
+			filename = self.base_filename		
 		self.points = []
-		with open(self.common_filename, 'r') as fd:
+		with open(filename, 'r') as fd:
 			for line in fd:
 				self.points.append([float(val) for val in line.split()])
 		self.points = numpy.array(self.points)
